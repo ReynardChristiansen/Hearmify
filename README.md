@@ -1,35 +1,23 @@
-# Hirmify
-
-Hirmify is an online platform designed to facilitate song playback, song search, and artist information search. Users can also personalize their music experience by liking songs to save them in their personal library and deleting songs in their library.
-
+# Hearmify
+Hearmify is a dynamic web application designed for musicians and music enthusiasts. It allows users to explore and transpose the chords of their favorite songs with ease. Whether you’re practicing your instrument or adjusting the key for a performance, TransposeApp provides a seamless way to transpose songs and enhance your music experience.
 
 
 
 ## Features
 
-- Song Playback: Hirmify allows users to play songs directly through the website and mobile device.
+- Homepage Search: Users can search for songs by name and explore the song details.
 
-- Song Search: Users can easily search for their favorite songs using the provided search feature.
+- Song Details Page: Once a song is selected, users can view its full details including lyrics and chords.
 
-- Artist Search: In addition to searching for songs, users can also search for information about music artists they like.
+- Transpose Chords: Users can transpose the chords of a song up or down to match their desired key.
 
-- Like Songs: Users can like songs to save them in their personal library for easy access and playback.
-  
-- Delete Liked Songs: Users can delete songs from their liked songs library, giving them full control over their saved music.
+- Responsive Design: Hearmify is fully responsive, ensuring a smooth experience on both desktop and mobile devices.
 
+## Demo
 
-
-## Testing
-
-https://hirmifys.vercel.app/
-
-
-## Experience the New Version!
-
-https://hirmify.vercel.app/
-
-
+You can try out Hearmify here: https://hearmify.vercel.app
 
 ## Feedback
 
 If you have any feedback, please reach out to me at reynard.satria@gmail.com
+
