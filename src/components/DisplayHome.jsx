@@ -81,7 +81,7 @@ const DisplayHome = () => {
               {filteredSongs.map((song) => (
                 <li
                   key={song.id}
-                  className="p-3 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50"
+                  className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm  hover:bg-gray-50"
                 >
                   <Link
                     to={`/${song.id}`}
