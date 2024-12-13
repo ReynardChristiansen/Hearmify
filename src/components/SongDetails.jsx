@@ -148,7 +148,7 @@ const SongDetails = () => {
     return lyrics.map((line, index) => (
       <div key={index} className="mb-4">
         <div className="font-semibold text-sm text-gray-700">
-          <span className="whitespace-pre">{chords[index]}</span>
+          <span className="whitespace-pre font-bold">{chords[index]}</span>
         </div>
         <div className="text-sm text-gray-700">{line}</div>
       </div>
