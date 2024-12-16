@@ -1,44 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
+import Cookies from 'js-cookie';
 
 const UpdateSong = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const token = Cookies.get('token');
 
   const [formData, setFormData] = useState({
     title: '',
-    lyrics: [''],  // Ensure there's at least one empty lyric initially
-    chords: ['']   // Ensure there's at least one empty chord initially
+    lyrics: [''],
+    chords: ['']
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchSongDetails = async () => {
+    const checkUserRole = async () => {
       try {
-        const response = await fetch(`https://api-hearmify.vercel.app/api/songs/getSongById/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch song details');
-        }
-
-        const song = await response.json();
-        setFormData({
-          title: song.title,
-          lyrics: song.lyrics.length > 0 ? song.lyrics : [''], // Ensure there's at least one lyric
-          chords: song.chords.length > 0 ? song.chords : ['']  // Ensure there's at least one chord
+        const userResponse = await fetch('https://api-hearmify.vercel.app/api/songs/getUser', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
-        setLoading(false);
+        if (!userResponse.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await userResponse.json();
+        if (userData.role === 'admin') {
+          setIsAdmin(true);
+        } else {
+          navigate('/');
+        }
       } catch (err) {
         setError(err.message);
-        setLoading(false);
       }
     };
 
-    fetchSongDetails();
-  }, [id]);
+    checkUserRole();
+  }, [token, navigate]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      const fetchSongDetails = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(`https://api-hearmify.vercel.app/api/songs/getSongById/${id}`, {
+            method: 'GET',
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch song details');
+          }
+          const song = await response.json();
+          setFormData({
+            title: song.title,
+            lyrics: song.lyrics.length > 0 ? song.lyrics : [''],
+            chords: song.chords.length > 0 ? song.chords : [''],
+          });
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+  
+      fetchSongDetails();
+    }
+  }, [id, isAdmin, token]);
 
   const handleInputChange = (e, index, type) => {
     const { value } = e.target;
@@ -46,14 +83,14 @@ const UpdateSong = () => {
     if (type === 'title') {
       setFormData({
         ...formData,
-        title: value
+        title: value,
       });
     } else {
       const updatedArray = [...formData[type]];
       updatedArray[index] = value;
       setFormData({
         ...formData,
-        [type]: updatedArray
+        [type]: updatedArray,
       });
     }
   };
@@ -62,14 +99,13 @@ const UpdateSong = () => {
     const newLyrics = [...formData.lyrics];
     const newChords = [...formData.chords];
 
-    // Insert new empty lyric and chord after the specified index
     newLyrics.splice(index + 1, 0, '');
     newChords.splice(index + 1, 0, '');
 
     setFormData({
       ...formData,
       lyrics: newLyrics,
-      chords: newChords
+      chords: newChords,
     });
   };
 
@@ -77,7 +113,6 @@ const UpdateSong = () => {
     const updatedLyrics = formData.lyrics.filter((_, i) => i !== index);
     const updatedChords = formData.chords.filter((_, i) => i !== index);
 
-    // Ensure at least one pair remains
     if (updatedLyrics.length === 0) {
       updatedLyrics.push('');
       updatedChords.push('');
@@ -86,7 +121,7 @@ const UpdateSong = () => {
     setFormData({
       ...formData,
       lyrics: updatedLyrics,
-      chords: updatedChords
+      chords: updatedChords,
     });
   };
 
@@ -104,13 +139,14 @@ const UpdateSong = () => {
       const response = await fetch(`https://api-hearmify.vercel.app/api/songs/updateSong/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           title: formData.title,
           lyrics: formData.lyrics,
-          chords: formData.chords
-        })
+          chords: formData.chords,
+        }),
       });
 
       if (!response.ok) {
@@ -190,7 +226,6 @@ const UpdateSong = () => {
                   Remove this pair
                 </button>
 
-                {/* Add more button below each pair */}
                 <button
                   type="button"
                   onClick={() => handleAddPairBelow(index)}

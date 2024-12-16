@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const SongDetails = () => {
   const { id } = useParams();
@@ -10,12 +10,20 @@ const SongDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [transposedChords, setTransposedChords] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const token = Cookies.get("token");
 
   useEffect(() => {
     const fetchSongDetails = async () => {
       try {
         const response = await fetch(
-          `https://api-hearmify.vercel.app/api/songs/getSongById/${id}`
+          `https://api-hearmify.vercel.app/api/songs/getSongById/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch song details");
@@ -30,8 +38,32 @@ const SongDetails = () => {
       }
     };
 
+    const checkUserRole = async () => {
+      try {
+        const userResponse = await fetch(
+          `https://api-hearmify.vercel.app/api/songs/getUser`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const userData = await userResponse.json();
+        if (userData.role === "admin") {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
     fetchSongDetails();
-  }, [id]);
+    checkUserRole();
+  }, [id, token]);
 
   const transposeChords = (chords, direction) => {
     const majorChords = [
@@ -110,33 +142,57 @@ const SongDetails = () => {
         </p>
       );
     }
-  
+
     return lyrics.map((line, index) => (
       <div key={index} className="mb-4">
         <div className="font-semibold text-sm text-gray-700">
           <span className="whitespace-pre font-bold">
-            {chords[index]
-              .split(".")
-              .map((part, i) => (
-                <React.Fragment key={i}>
-                  {part}
-                  {i < chords[index].split(".").length - 1 && <br />}
-                </React.Fragment>
-              ))}
+            {chords[index].split(".").map((part, i) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < chords[index].split(".").length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </span>
         </div>
         <div className="text-sm text-gray-700">
-          {line
-            .split(".")
-            .map((part, i) => (
-              <React.Fragment key={i}>
-                {part}
-                {i < line.split(".").length - 1 && <br />}
-              </React.Fragment>
-            ))}
+          {line.split(".").map((part, i) => (
+            <React.Fragment key={i}>
+              {part}
+              {i < line.split(".").length - 1 && <br />}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     ));
+  };
+
+  const handleDelete = async () => {
+    setLoading(true);
+    if (window.confirm("Are you sure you want to delete this song?")) {
+      try {
+        const response = await fetch(
+          `https://api-hearmify.vercel.app/api/songs/delete/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          setLoading(false);
+          throw new Error("Failed to delete the song");
+        }
+
+        setLoading(false);
+        navigate("/");
+      } catch (error) {
+        setLoading(false);
+        setError(error.message);
+      }
+    }
   };
 
   if (loading) {
@@ -158,14 +214,22 @@ const SongDetails = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-center mb-6">
-          <Link
-            to={`/update/${id}`}
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-          >
-            Update
-          </Link>
-        </div>
+        {isAdmin && (
+          <div className="flex justify-center mb-6">
+            <Link
+              to={`/update/${id}`}
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            >
+              Update
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="ml-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        )}
         {song ? (
           <>
             <div className="bg-white p-6 rounded-lg shadow">

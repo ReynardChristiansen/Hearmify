@@ -1,24 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import Cookies from "js-cookie";
 
 const DisplayHome = () => {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchSongs = async () => {
+      const token = Cookies.get("token");
+
       try {
         const response = await fetch(
-          "https://api-hearmify.vercel.app/api/songs/getAllSongs"
+          "https://api-hearmify.vercel.app/api/songs/getAllSongs",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch songs");
         }
         const data = await response.json();
         setSongs(data);
+
+        const userResponse = await fetch(
+          `https://api-hearmify.vercel.app/api/songs/getUser`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const userData = await userResponse.json();
+
+        if (userResponse.ok && userData.role === "admin") {
+          setIsAdmin(true);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -61,15 +88,15 @@ const DisplayHome = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="p-2">
-
-      <Link
-        to="/create"
-        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-      >
-        Create
-      </Link>
+        {isAdmin && (
+          <Link
+            to="/create"
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          >
+            Create
+          </Link>
+        )}
       </div>
-
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
@@ -92,7 +119,7 @@ const DisplayHome = () => {
               {filteredSongs.map((song) => (
                 <li
                   key={song.id}
-                  className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm  hover:bg-gray-50"
+                  className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50"
                 >
                   <Link
                     to={`/${song.id}`}
