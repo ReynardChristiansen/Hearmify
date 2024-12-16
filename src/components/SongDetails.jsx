@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SongDetails = () => {
@@ -62,24 +62,24 @@ const SongDetails = () => {
       "Gm",
       "G#m",
     ];
-  
+
     const transpose = (chord, direction) => {
       let chordSet = majorChords;
-  
+
       if (chord.endsWith("m")) {
         chordSet = minorChords;
       }
-  
+
       const index = chordSet.indexOf(chord);
       if (index === -1) return chord;
-  
+
       let newIndex = index + direction;
       if (newIndex < 0) newIndex = chordSet.length - 1;
       if (newIndex >= chordSet.length) newIndex = 0;
-  
+
       return chordSet[newIndex];
     };
-  
+
     return chords.map((line) => {
       const parts = line.split(/(\s+)/);
       return parts
@@ -87,7 +87,6 @@ const SongDetails = () => {
         .join("");
     });
   };
-  
 
   const handleTransposeUp = async () => {
     if (song) {
@@ -141,6 +140,14 @@ const SongDetails = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-center mb-6">
+          <Link
+            to={`/update/${id}`}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          >
+            Update
+          </Link>
+        </div>
         {song ? (
           <>
             <div className="bg-white p-6 rounded-lg shadow">
