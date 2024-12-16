@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SongDetails = () => {
@@ -62,65 +62,32 @@ const SongDetails = () => {
       "Gm",
       "G#m",
     ];
-
+  
     const transpose = (chord, direction) => {
       let chordSet = majorChords;
-      let isMinor = false;
-
+  
       if (chord.endsWith("m")) {
         chordSet = minorChords;
-        isMinor = true;
       }
-
+  
       const index = chordSet.indexOf(chord);
       if (index === -1) return chord;
-
-      let newIndex = index + (direction === 1 ? 1 : -1);
+  
+      let newIndex = index + direction;
       if (newIndex < 0) newIndex = chordSet.length - 1;
       if (newIndex >= chordSet.length) newIndex = 0;
-
+  
       return chordSet[newIndex];
     };
-
-    const chordString = chords.join(" ");
-
-    const chordParts = chordString.split(/\s+/);
-
-    const transposedChords = chordParts.map((chord) =>
-      transpose(chord, direction)
-    );
-
-    let result = [];
-    let currentLine = "";
-
-    let chordIndex = 0;
-    for (let i = 0; i < chords.length; i++) {
-      let originalLine = chords[i];
-      let parts = originalLine.split(/\s+/);
-
-      for (let j = 0; j < parts.length; j++) {
-        const originalChord = parts[j];
-        if (originalChord) {
-          currentLine += transposedChords[chordIndex++];
-        }
-
-        if (j < parts.length - 1) {
-          const spaceCount = Math.max(
-            0,
-            originalLine.indexOf(parts[j + 1]) -
-              originalLine.indexOf(parts[j]) -
-              parts[j].length
-          );
-          currentLine += " ".repeat(spaceCount);
-        }
-      }
-
-      result.push(currentLine);
-      currentLine = "";
-    }
-
-    return result;
+  
+    return chords.map((line) => {
+      const parts = line.split(/(\s+)/);
+      return parts
+        .map((part) => (part.trim() ? transpose(part.trim(), direction) : part))
+        .join("");
+    });
   };
+  
 
   const handleTransposeUp = async () => {
     if (song) {
@@ -131,7 +98,7 @@ const SongDetails = () => {
 
   const handleTransposeDown = async () => {
     if (song) {
-      const newChords = transposeChords(transposedChords, 0);
+      const newChords = transposeChords(transposedChords, -1);
       setTransposedChords(newChords);
     }
   };
@@ -157,7 +124,7 @@ const SongDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-screen ">
         <ClipLoader color="#4cabe6" loading={loading} size={50} />
       </div>
     );
@@ -165,7 +132,7 @@ const SongDetails = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-screen ">
         <p className="text-red-500">Error: {error}</p>
       </div>
     );

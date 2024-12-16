@@ -39,7 +39,7 @@ const DisplayHome = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-screen ">
         <ClipLoader
           color="#4cabe6"
           loading={loading}
@@ -52,7 +52,7 @@ const DisplayHome = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-screen ">
         <p className="text-red-500">Error: {error}</p>
       </div>
     );
