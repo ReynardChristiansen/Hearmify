@@ -193,6 +193,7 @@ const SongDetails = () => {
         setError(error.message);
       }
     }
+    setLoading(false);
   };
 
   if (loading) {
