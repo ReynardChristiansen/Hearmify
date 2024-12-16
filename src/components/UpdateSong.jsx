@@ -42,12 +42,20 @@ const UpdateSong = () => {
 
   const handleInputChange = (e, index, type) => {
     const { value } = e.target;
-    const updatedArray = [...formData[type]];
-    updatedArray[index] = value;
-    setFormData({
-      ...formData,
-      [type]: updatedArray
-    });
+  
+    if (type === 'title') {
+      setFormData({
+        ...formData,
+        title: value
+      });
+    } else {
+      const updatedArray = [...formData[type]];
+      updatedArray[index] = value;
+      setFormData({
+        ...formData,
+        [type]: updatedArray
+      });
+    }
   };
 
   const handleAddPairBelow = (index) => {
@@ -109,7 +117,7 @@ const UpdateSong = () => {
         throw new Error('Failed to update song');
       }
 
-      navigate('/');
+      navigate(`/${id}`);
     } catch (err) {
       setError(err.message);
     }
