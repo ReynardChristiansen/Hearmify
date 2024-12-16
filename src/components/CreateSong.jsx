@@ -7,25 +7,59 @@ const CreateSong = () => {
 
   const [formData, setFormData] = useState({
     title: '',
-    lyrics: '',
-    chords: ''
+    lyrics: [''],  // Ensure there's at least one lyric initially
+    chords: ['']   // Ensure there's at least one chord initially
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e, index, type) => {
+    const { value } = e.target;
+    const updatedArray = [...formData[type]];
+    updatedArray[index] = value;
     setFormData({
       ...formData,
-      [name]: value
+      [type]: updatedArray
+    });
+  };
+
+  const handleAddPairBelow = (index) => {
+    const newLyrics = [...formData.lyrics];
+    const newChords = [...formData.chords];
+
+    // Insert a new empty lyric and chord below the specified index
+    newLyrics.splice(index + 1, 0, '');
+    newChords.splice(index + 1, 0, '');
+
+    setFormData({
+      ...formData,
+      lyrics: newLyrics,
+      chords: newChords
+    });
+  };
+
+  const handleRemovePair = (index) => {
+    const updatedLyrics = formData.lyrics.filter((_, i) => i !== index);
+    const updatedChords = formData.chords.filter((_, i) => i !== index);
+
+    // Ensure at least one pair remains
+    if (updatedLyrics.length === 0) {
+      updatedLyrics.push('');
+      updatedChords.push('');
+    }
+
+    setFormData({
+      ...formData,
+      lyrics: updatedLyrics,
+      chords: updatedChords
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.lyrics || !formData.chords) {
+    if (!formData.title || formData.lyrics.some(lyric => !lyric.trim()) || formData.chords.some(chord => !chord.trim())) {
       alert('All fields are required');
       return;
     }
@@ -41,8 +75,8 @@ const CreateSong = () => {
         },
         body: JSON.stringify({
           title: formData.title,
-          lyrics: formData.lyrics.split('\n'),
-          chords: formData.chords.split(',').map(chord => chord.trim())
+          lyrics: formData.lyrics,
+          chords: formData.chords
         })
       });
 
@@ -59,7 +93,7 @@ const CreateSong = () => {
   };
 
   return (
-    <div className="w-[100%] h-[100%] flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       {loading ? (
         <div className="flex justify-center items-center h-screen">
           <ClipLoader color="#4cabe6" loading={loading} size={50} />
@@ -76,33 +110,56 @@ const CreateSong = () => {
                 id="title"
                 name="title"
                 value={formData.title}
-                onChange={handleInputChange}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full border border-gray-300 rounded p-2"
               />
             </div>
 
-            <div>
-              <label htmlFor="lyrics" className="block font-semibold mb-2">Lyrics</label>
-              <textarea
-                id="lyrics"
-                name="lyrics"
-                value={formData.lyrics}
-                onChange={handleInputChange}
-                rows={8}
-                className="w-full border border-gray-300 rounded p-2"
-              ></textarea>
-            </div>
+            <div className="overflow-y-auto max-h-[60vh]">
+              {formData.lyrics.map((_, index) => (
+                <div
+                  key={index}
+                  className={`mb-4`}
+                >
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <label htmlFor={`chords-${index}`} className="block font-semibold mb-2">Chords {index + 1}</label>
+                      <input
+                        type="text"
+                        id={`chords-${index}`}
+                        value={formData.chords[index]}
+                        onChange={(e) => handleInputChange(e, index, 'chords')}
+                        className="w-full border border-gray-300 rounded p-2"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`lyrics-${index}`} className="block font-semibold mb-2">Lyrics {index + 1}</label>
+                      <textarea
+                        id={`lyrics-${index}`}
+                        value={formData.lyrics[index]}
+                        onChange={(e) => handleInputChange(e, index, 'lyrics')}
+                        rows={4}
+                        className="w-full border border-gray-300 rounded p-2"
+                      />
+                    </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePair(index)}
+                        className="text-red-500 mt-2"
+                      >
+                        Remove this pair
+                      </button>
 
-            <div>
-              <label htmlFor="chords" className="block font-semibold mb-2">Chords</label>
-              <input
-                type="text"
-                id="chords"
-                name="chords"
-                value={formData.chords}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded p-2"
-              />
+                      <button
+                        type="button"
+                        onClick={() => handleAddPairBelow(index)}
+                        className="text-blue-500 mt-2"
+                      >
+                        Add More Lyrics & Chords Below
+                      </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <button

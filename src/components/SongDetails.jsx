@@ -110,13 +110,31 @@ const SongDetails = () => {
         </p>
       );
     }
-
+  
     return lyrics.map((line, index) => (
       <div key={index} className="mb-4">
         <div className="font-semibold text-sm text-gray-700">
-          <span className="whitespace-pre font-bold">{chords[index]}</span>
+          <span className="whitespace-pre font-bold">
+            {chords[index]
+              .split(".")
+              .map((part, i) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < chords[index].split(".").length - 1 && <br />}
+                </React.Fragment>
+              ))}
+          </span>
         </div>
-        <div className="text-sm text-gray-700">{line}</div>
+        <div className="text-sm text-gray-700">
+          {line
+            .split(".")
+            .map((part, i) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < line.split(".").length - 1 && <br />}
+              </React.Fragment>
+            ))}
+        </div>
       </div>
     ));
   };
