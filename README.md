@@ -11,7 +11,7 @@ Hearmify is a dynamic web application designed for musicians and music enthusias
 
 - Transpose Chords: Users can transpose the chords of a song up or down to match their desired key.
 
-- Song Management: Registered users can create, update, and delete songs.
+- Song Management: Registered Admin can create, update, and delete songs.
 
 - User Authentication: Users can log in or register to access personalized features.
 
