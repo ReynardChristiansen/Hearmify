@@ -3,8 +3,6 @@ Hearmify is a dynamic web application designed for musicians and music enthusias
 
 ![image alt](https://raw.githubusercontent.com/ReynardChristiansen/Hearmify/refs/heads/main/result.png)
 
-
-
 ## Features
 
 - Homepage Search: Users can search for songs by name and explore the song details.
@@ -13,7 +11,9 @@ Hearmify is a dynamic web application designed for musicians and music enthusias
 
 - Transpose Chords: Users can transpose the chords of a song up or down to match their desired key.
 
-- Responsive Design: Hearmify is fully responsive, ensuring a smooth experience on both desktop and mobile devices.
+- Song Management: Registered users can create, update, and delete songs.
+
+- User Authentication: Users can log in or register to access personalized features.
 
 ## Demo
 
