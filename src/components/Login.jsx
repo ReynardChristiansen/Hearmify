@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import ClipLoader from "react-spinners/ClipLoader";
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ setIsLoggedIn, setIsRegistering }) => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -56,27 +56,12 @@ const Login = ({ setIsLoggedIn }) => {
     setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen ">
-        <ClipLoader
-          color="#4cabe6"
-          loading={loading}
-          size={50}
-          aria-label="Loading Spinner"
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="text-red-500 text-center mb-4">{error}</div>
-          )}
+          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
           <div>
             <label htmlFor="username" className="block text-sm font-semibold">
               Username
@@ -105,9 +90,16 @@ const Login = ({ setIsLoggedIn }) => {
           </div>
           <button
             type="submit"
-            className="w-full p-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
           >
             Login
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsRegistering(true)}
+            className="w-full p-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
+          >
+            Register
           </button>
         </form>
       </div>
