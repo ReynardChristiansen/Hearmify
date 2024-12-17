@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import Cookies from "js-cookie";
 
@@ -9,6 +9,8 @@ const DisplayHome = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const navigate = useNavigate(); // To redirect after logout
 
   useEffect(() => {
     const fetchSongs = async () => {
@@ -60,6 +62,16 @@ const DisplayHome = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleLogout = () => {
+    // Clear all cookies
+    Object.keys(Cookies.get()).forEach((cookieName) => {
+      Cookies.remove(cookieName);
+    });
+
+    // Redirect to login page
+    window.location.reload();
+  };
+
   const filteredSongs = songs.filter((song) =>
     song.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -87,15 +99,26 @@ const DisplayHome = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
-      <div className="p-2">
-        {isAdmin && (
-          <Link
-            to="/create"
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+      <div className="flex flex-row justify-between">
+        <div className="p-2">
+          {isAdmin && (
+            <Link
+              to="/create"
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            >
+              Create
+            </Link>
+          )}
+        </div>
+
+        <div className="p-2">
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
           >
-            Create
-          </Link>
-        )}
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
