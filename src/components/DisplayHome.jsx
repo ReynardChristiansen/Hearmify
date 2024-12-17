@@ -72,8 +72,12 @@ const DisplayHome = () => {
     window.location.reload();
   };
 
+  // Filtered songs by title or lyrics
   const filteredSongs = songs.filter((song) =>
-    song.title.toLowerCase().includes(searchQuery.toLowerCase())
+    song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    song.lyrics.some((line) =>
+      line.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   if (loading) {
@@ -99,7 +103,7 @@ const DisplayHome = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-center">
         <div className="p-2">
           {isAdmin && (
             <Link
@@ -129,7 +133,7 @@ const DisplayHome = () => {
         <div className="mb-6 flex justify-center">
           <input
             type="text"
-            placeholder="Search songs by title"
+            placeholder="Search songs by title or lyrics"
             value={searchQuery}
             onChange={handleSearchChange}
             className="w-full max-w-md p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
