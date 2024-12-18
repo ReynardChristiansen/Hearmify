@@ -4,6 +4,7 @@ import DisplayHome from './DisplayHome';
 import SongDetails from './SongDetails';
 import UpdateSong from './UpdateSong';
 import CreateSong from './CreateSong';
+import MemberPage from './Member';
 
 const Display = () => {
 
@@ -14,6 +15,7 @@ const Display = () => {
         <Route path='/:id' element={<SongDetails />}/>
         <Route path='/update/:id' element={<UpdateSong />}/>
         <Route path='/create' element={<CreateSong />}/>
+        <Route path='/Member' element={<MemberPage />} />
       </Routes>
     </div>
   )

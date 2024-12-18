@@ -104,6 +104,8 @@ const DisplayHome = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="flex flex-row justify-between items-center">
+        <div className="flex">
+
         <div className="p-2">
           {isAdmin && (
             <Link
@@ -116,6 +118,19 @@ const DisplayHome = () => {
         </div>
 
         <div className="p-2">
+          {isAdmin && (
+            <Link
+              to="/Member"
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            >
+              Member
+            </Link>
+          )}
+        </div>
+        </div>
+
+
+        <div className="p-2">
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
@@ -124,6 +139,8 @@ const DisplayHome = () => {
           </button>
         </div>
       </div>
+
+      
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
